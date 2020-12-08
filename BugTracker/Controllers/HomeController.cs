@@ -10,6 +10,7 @@ namespace BugTracker.Controllers
     {
         public ActionResult Index()
         {
+
             return View();
         }
 
