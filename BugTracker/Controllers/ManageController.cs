@@ -15,6 +15,7 @@ namespace BugTracker.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext dbContext = new ApplicationDbContext();
 
         public ManageController()
         {
@@ -64,13 +65,22 @@ namespace BugTracker.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            var user = UserManager.FindById(userId);
+
+            var fname = user.FirstName;
+            var lname = user.LastName;
+            var useremail = user.Email;
+
             var model = new IndexViewModel
             {
-                HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                FirstName = fname,
+                LastName = lname,
+                Email = useremail,
+                HasPassword = HasPassword()
+                //PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
+                //TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
+                //Logins = await UserManager.GetLoginsAsync(userId),
+                //BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
             return View(model);
         }
@@ -97,6 +107,49 @@ namespace BugTracker.Controllers
                 message = ManageMessageId.Error;
             }
             return RedirectToAction("ManageLogins", new { Message = message });
+        }
+
+        //
+        //GET: /Manage/EditSettings
+        public ActionResult EditSettings()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = UserManager.FindById(userId);
+
+            var fname = user.FirstName;
+            var lname = user.LastName;
+            var useremail = user.Email;
+
+            var model = new IndexViewModel
+            {
+                FirstName = fname,
+                LastName = lname,
+                Email = useremail,
+                HasPassword = HasPassword()
+            };
+            return View(model);
+        }
+
+        //
+        //POST: /Manage/EditSettings
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditSettings(IndexViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            // Find the user, update the fields with the new ones
+            ApplicationUser user = UserManager.FindById(User.Identity.GetUserId());
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.UserName = model.Email;
+
+            IdentityResult result = await UserManager.UpdateAsync(user);
+
+            return RedirectToAction("Index");
         }
 
         //
