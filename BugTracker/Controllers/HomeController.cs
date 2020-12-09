@@ -10,8 +10,8 @@ namespace BugTracker.Controllers
     {
         public ActionResult Index()
         {
-
-            return View();
+            return RedirectToAction("Index", "Projects", null);
+            //return View();
         }
 
         public ActionResult About()
