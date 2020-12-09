@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -15,9 +16,21 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Projects
+        [Authorize]
         public ActionResult Index()
         {
-            return View(db.Projects.ToList());
+            //intention here is to perform an join on the Projects table with the ProjectUsers lookup table
+            //to retrieve all the projects a user is associated with
+            var id = User.Identity.GetUserId();
+            if (User.IsInRole("Admin"))
+            {
+                return View(db.Projects.ToList());
+            }
+            else
+            {
+                var projects = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
+                return View(projects.ToList());
+            }
         }
 
         // GET: Projects/Details/5
@@ -36,6 +49,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize(Roles ="Admin")]
         public ActionResult Create()
         {
             return View();
@@ -44,6 +58,7 @@ namespace BugTracker.Controllers
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Description")] Project project)
@@ -59,6 +74,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -90,6 +106,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
