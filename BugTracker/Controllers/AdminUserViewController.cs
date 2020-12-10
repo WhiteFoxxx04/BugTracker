@@ -6,10 +6,9 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using BugTracker.Helpers;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
-//using BugTracker.Helpers;
-using BugTracker.ViewModel;
 
 namespace BugTracker.Controllers
 {
@@ -44,8 +43,34 @@ namespace BugTracker.Controllers
             var user = db.Users.Find(id);
             AdminUserViewModel AdminModel = new AdminUserViewModel();
             UserRolesHelper helper = new UserRolesHelper();
-            var selected = helper.ListUserRoles(id);
-            AdminModel.Roles = new MultiSelectList(db.Roles, "Name", "Name", selected);
+
+            //AdminModel.Roles = new MultiSelectList(db.Roles, "Name", "Name", selected);
+            var allRoles = new List<string>();
+
+            allRoles.Add("Submitter");
+            allRoles.Add("Developer");
+            allRoles.Add("Project Manager");
+            allRoles.Add("Admin");
+
+            AdminModel.RolesToSelect = new RoleCheckBox[4];
+            //build an array that has all user roles and whether the user is in that role
+            //this will be sent to the view
+            int i = 0;
+            foreach (var role in allRoles)
+            {
+                var checkBox = new RoleCheckBox();
+                checkBox.RoleName = role;
+                if (helper.IsUserInRole(id, role))
+                {
+                    checkBox.Checked = true;
+                }
+                else
+                {
+                    checkBox.Checked = false;
+                }
+                AdminModel.RolesToSelect[i] = checkBox;
+                i++;
+            }
             AdminModel.UserId = user.Id;
             AdminModel.UserName = user.FirstName + " " + user.LastName;
             AdminModel.UserEmail = user.Email;
@@ -55,7 +80,7 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserId,SelectedRoles")] AdminUserViewModel admModel)
+        public ActionResult Edit([Bind(Include = "UserId,RolesToSelect")] AdminUserViewModel admModel)
         {
             var user = db.Users.Find(admModel.UserId);
             var id = admModel.UserId;
@@ -67,9 +92,31 @@ namespace BugTracker.Controllers
             allRoles.Add("Project Manager");
             allRoles.Add("Admin");
 
-            if (admModel.SelectedRoles != null)
+            //build a list of selected roles based on the array in the model that was returned
+            var selectedRoles = new List<string>();
+            for (int i = 0; i < admModel.RolesToSelect.Length; i++)
             {
-                foreach (var sRole in admModel.SelectedRoles)
+                if (admModel.RolesToSelect[i].Checked == true)
+                {
+                    selectedRoles.Add(admModel.RolesToSelect[i].RoleName);
+                }
+            }
+
+            //if no roles have been selected, remove user from all roles
+            if (selectedRoles == null)
+            {
+                foreach (var rRole in allRoles)
+                {
+                    if (helper.IsUserInRole(admModel.UserId, rRole))
+                    {
+                        helper.RemoveUserFromRole(admModel.UserId, rRole);
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                foreach (var sRole in selectedRoles)
                 {
                     if (!helper.IsUserInRole(admModel.UserId, sRole))
                     {
@@ -77,7 +124,7 @@ namespace BugTracker.Controllers
                     }
                 }
 
-                var rolesToRemove = allRoles.Except(admModel.SelectedRoles);
+                var rolesToRemove = allRoles.Except(selectedRoles);
                 foreach (var rRole in rolesToRemove)
                 {
                     if (helper.IsUserInRole(admModel.UserId, rRole))
@@ -87,8 +134,6 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BugTracker.ViewModel
+namespace BugTracker.Helpers
 {
     public class UserRolesHelper
     {
@@ -16,9 +16,9 @@ namespace BugTracker.ViewModel
 
         public UserRolesHelper()
         {
-            this.db = new ApplicationDbContext();
-            this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-            this.roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+            db = new ApplicationDbContext();
+            userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
         }
 
         public bool IsUserInRole(string userId, string roleName)
