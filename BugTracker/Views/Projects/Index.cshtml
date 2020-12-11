@@ -33,12 +33,14 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
+                @Html.ActionLink("Details", "Details", new { id = item.Id })
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                 {
+                    @Html.Raw(" | ")
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id })
                     @Html.Raw(" | ")
+                    @Html.ActionLink("Assign Users", "Edit", "ProjectUserView", new { projectId = item.Id }, new { })
                 }
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) @*|*@
                 @*@Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
             </td>
         </tr>

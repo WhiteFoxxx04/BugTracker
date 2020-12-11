@@ -1,5 +1,8 @@
 namespace BugTracker.Migrations
 {
+    using BugTracker.Models;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -9,15 +12,96 @@ namespace BugTracker.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = false;
+            AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(BugTracker.Models.ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            var roleManager = new RoleManager<IdentityRole>(
+            new RoleStore<IdentityRole>(context));
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
+            //create Admin role
+            if (!context.Roles.Any(r => r.Name == "Admin"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Admin" });
+            }
+
+            //create a Project Manager role
+            if (!context.Roles.Any(r => r.Name == "Project Manager"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Project Manager" });
+            }
+
+            //create a Developer role
+            if (!context.Roles.Any(r => r.Name == "Developer"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Developer" });
+            }
+
+            //create a Submitter role
+            if (!context.Roles.Any(r => r.Name == "Submitter"))
+            {
+                roleManager.Create(new IdentityRole { Name = "Submitter" });
+            }
+
+            var userManager = new UserManager<ApplicationUser>(
+            new UserStore<ApplicationUser>(context));
+            if (!context.Users.Any(u => u.Email == "asgarkhan16@gmail.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "asgarkhan16@gmail.com",
+                    Email = "asgarkhan16@gmail.com",
+                    FirstName = "Asghar",
+                    LastName = "Khan",
+                }, "Welcome@123");
+            }
+
+            if (!context.Users.Any(u => u.Email == "mariobros8828@gmail.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "mariobros8828@gmail.com",
+                    Email = "mariobros8828@gmail.com",
+                    FirstName = "Mario",
+                    LastName = "Khan",
+                }, "Welcome@123");
+            }
+
+            if (!context.Users.Any(u => u.Email == "dvlprkhn@gmail.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "dvlprkhn@gmail.com",
+                    Email = "dvlprkhn@gmail.com",
+                    FirstName = "AsgharDev",
+                    LastName = "Khan",
+                }, "Welcome@123");
+            }
+
+            if (!context.Users.Any(u => u.Email == "asgarkhan0405@outlook.com"))
+            {
+                userManager.Create(new ApplicationUser
+                {
+                    UserName = "asgarkhan0405@outlook.com",
+                    Email = "asgarkhan0405@outlook.com",
+                    FirstName = "AsgharSub",
+                    LastName = "Khan",
+                }, "Welcome@123");
+            }
+
+            //set the users we created into the different roles
+            var userId = userManager.FindByEmail("asgarkhan16@gmail.com").Id;
+            userManager.AddToRole(userId, "Admin");
+
+            var userId2 = userManager.FindByEmail("mariobros8828@gmail.com").Id;
+            userManager.AddToRole(userId2, "Project Manager");
+
+            var userId3 = userManager.FindByEmail("dvlprkhn@gmail.com").Id;
+            userManager.AddToRole(userId3, "Developer");
+
+            var userId4 = userManager.FindByEmail("asgarkhan0405@outlook.com").Id;
+            userManager.AddToRole(userId4, "Submitter");
         }
     }
 }

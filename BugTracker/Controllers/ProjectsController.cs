@@ -24,16 +24,24 @@ namespace BugTracker.Controllers
             var id = User.Identity.GetUserId();
             if (User.IsInRole("Admin"))
             {
-                return View(db.Projects.ToList());
+                var myList = db.Projects.ToList();
+                return View(quickReverse(db.Projects.ToList()));
             }
             else
             {
                 var projects = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
-                return View(projects.ToList());
+                return View(quickReverse(projects.ToList()));
             }
         }
 
+        public List<Project> quickReverse(List<Project> oldList)
+        {
+            oldList.Reverse();
+            return oldList;
+        }
+
         // GET: Projects/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -49,16 +57,15 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles ="Admin, Project Manager")]
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: Projects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize]
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Name,Description")] Project project)
@@ -67,6 +74,14 @@ namespace BugTracker.Controllers
             {
                 db.Projects.Add(project);
                 db.SaveChanges();
+
+                ProjectUser projUser = new ProjectUser();
+                projUser.UserId = User.Identity.GetUserId();
+                projUser.ProjectId = project.Id;
+
+                db.ProjectUsers.Add(projUser);
+                db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -90,8 +105,8 @@ namespace BugTracker.Controllers
         }
 
         // POST: Projects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Name,Description")] Project project)
