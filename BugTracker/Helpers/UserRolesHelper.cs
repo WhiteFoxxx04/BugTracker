@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace BugTracker.Helpers
+namespace BugTracker.Models
 {
     public class UserRolesHelper
     {
@@ -16,9 +16,9 @@ namespace BugTracker.Helpers
 
         public UserRolesHelper()
         {
-            db = new ApplicationDbContext();
-            userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-            roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+            this.db = new ApplicationDbContext();
+            this.userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            this.roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
         }
 
         public bool IsUserInRole(string userId, string roleName)
@@ -48,11 +48,6 @@ namespace BugTracker.Helpers
         {
             var userIds = System.Web.Security.Roles.GetUsersInRole(roleName);
             return userManager.Users.Where(u => !userIds.Contains(u.Id)).ToList();
-        }
-        public string GetUserName(string uId)
-        {
-            var appUser = db.Users.Find(uId);
-            return appUser.FirstName + " " + appUser.LastName;
         }
     }
 }

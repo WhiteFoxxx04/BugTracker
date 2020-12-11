@@ -18,29 +18,31 @@
 
     @foreach (var item in Model)
     {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.UserName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.UserEmail)
-    </td>
-    <td>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserEmail)
+        </td>
+        <td>
         @if (item.CurrentRoles == null || item.CurrentRoles.Count == 0)
         {
-@Html.Raw("None assigned") }
-                else
-                {
-                    foreach (var role in item.CurrentRoles)
-                    {
-@Html.Raw(role)
-                        @Html.Raw("<br>")                    }
-                                        }
-    </td>
-    <td>
-        @Html.ActionLink("Edit Roles", "Edit", new { id = item.UserId })
-    </td>
-</tr>}
+            @Html.Raw("None assigned") 
+        }
+        else
+        {
+            foreach (var role in item.CurrentRoles)
+            {
+                @Html.Raw(role)
+                @Html.Raw("<br>")         
+            }
+        }
+        </td>
+        <td>
+            @Html.ActionLink("Edit Roles", "Edit", new { id = item.UserId })
+        </td>
+    </tr>}
 
 </table>
 

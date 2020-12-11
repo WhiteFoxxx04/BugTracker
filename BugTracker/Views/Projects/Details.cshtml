@@ -28,22 +28,22 @@
 
     </dl>
 </div>
-@if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-{
-    @Html.ActionLink("Edit Project Details", "Edit", "Projects", new { id = Model.Id }, new { @class = "btn btn-primary" })
-    @Html.Raw(" ")
-@Html.ActionLink("Delete", "Delete", "Projects", new { id = Model.Id }, new { @class = "btn btn-primary" })
-}
-<br />
-<br />
-@{
-    var myHelper = new ProjectUserHelper();
-    var userList = myHelper.UsersInProject(Model.Id);
-    var userInfoList = myHelper.getUserInfo(userList);
-}
-@Html.Partial("_ShowProjectUsers", userInfoList, new ViewDataDictionary { { "projectId", Model.Id } })
-<br />
-<br />
+    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+    {
+        @Html.ActionLink("Edit Project Details", "Edit", "Projects", new { id = Model.Id }, new { @class = "btn btn-primary" })
+        @Html.Raw(" ")
+        @Html.ActionLink("Delete", "Delete", "Projects", new { id = Model.Id }, new { @class = "btn btn-primary" })
+    }
+    <br />
+    <br />
+    @{
+        var myHelper = new ProjectUserHelper();
+        var userList = myHelper.UsersInProject(Model.Id);
+        var userInfoList = myHelper.getUserInfo(userList);
+    }
+    @Html.Partial("_ShowProjectUsers", userInfoList, new ViewDataDictionary { { "projectId", Model.Id } })
+    <br />
+    <br />
 <p>
     @Html.ActionLink("Back to Projects List", "Index")
 
