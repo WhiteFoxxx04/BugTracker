@@ -195,10 +195,6 @@
     <Compile Include="Migrations\202012081719272_InitialModel.Designer.cs">
       <DependentUpon>202012081719272_InitialModel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202012081722565_TicketStatus.cs" />
-    <Compile Include="Migrations\202012081722565_TicketStatus.Designer.cs">
-      <DependentUpon>202012081722565_TicketStatus.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\202012081723548_TicketPriority.cs" />
     <Compile Include="Migrations\202012081723548_TicketPriority.Designer.cs">
       <DependentUpon>202012081723548_TicketPriority.cs</DependentUpon>
@@ -238,6 +234,14 @@
     <Compile Include="Migrations\202012092318407_AnnotationsOnProjects.cs" />
     <Compile Include="Migrations\202012092318407_AnnotationsOnProjects.designer.cs">
       <DependentUpon>202012092318407_AnnotationsOnProjects.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012121438100_TicketStatus.cs" />
+    <Compile Include="Migrations\202012121438100_TicketStatus.Designer.cs">
+      <DependentUpon>202012121438100_TicketStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202012121455534_PopulateTicketStatus.cs" />
+    <Compile Include="Migrations\202012121455534_PopulateTicketStatus.Designer.cs">
+      <DependentUpon>202012121455534_PopulateTicketStatus.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -351,9 +355,6 @@
     <EmbeddedResource Include="Migrations\202012081719272_InitialModel.resx">
       <DependentUpon>202012081719272_InitialModel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081722565_TicketStatus.resx">
-      <DependentUpon>202012081722565_TicketStatus.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012081723548_TicketPriority.resx">
       <DependentUpon>202012081723548_TicketPriority.cs</DependentUpon>
     </EmbeddedResource>
@@ -383,6 +384,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202012092318407_AnnotationsOnProjects.resx">
       <DependentUpon>202012092318407_AnnotationsOnProjects.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012121438100_TicketStatus.resx">
+      <DependentUpon>202012121438100_TicketStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012121455534_PopulateTicketStatus.resx">
+      <DependentUpon>202012121455534_PopulateTicketStatus.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

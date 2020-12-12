@@ -58,7 +58,7 @@ namespace BugTracker.Models
         }
 
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<TicketStatus> TicketStatuses { get; set; }
+        
         public DbSet<TicketPriority> TicketPriorities { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
         public DbSet<Project> Projects { get; set; }
@@ -67,5 +67,6 @@ namespace BugTracker.Models
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
+        public DbSet<TicketStatus> TicketStatuses { get; set; }
     }
 }
