@@ -261,9 +261,10 @@
     <Compile Include="ViewModel\UserInfoViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap-slate.css" />
+    <Content Include="Content\bootstrap-darkly.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap-theme1.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="favicon.ico" />

@@ -19,35 +19,39 @@
     <tbody>
         @foreach (var item in Model)
         {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.UserName)
-    </td>
-    <td>
-        @if (item.CurrentRoles == null || item.CurrentRoles.Count == 0)
-        {
-@Html.Raw("None assigned") }
-                else
-                {
-                    foreach (var role in item.CurrentRoles)
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @if (item.CurrentRoles == null || item.CurrentRoles.Count == 0)
                     {
-@Html.Raw(role)
-                        @Html.Raw("<br>")}
-                                        }
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Email)
-    </td>
-</tr>}
+                        @Html.Raw("None assigned") 
+                    }
+                    else
+                    {
+                        foreach (var role in item.CurrentRoles)
+                        {
+                            @Html.Raw(role)
+                            @Html.Raw("<br>")
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+            </tr>}
     </tbody>
 </table>
 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
 {
-<p>
-    @Html.ActionLink("Edit Project Users", "Edit", "ProjectUserView", new { projectId = ViewData["projectId"] }, null)
-</p>}
+    <p>
+        @Html.ActionLink("Edit Project Users", "Edit", "ProjectUserView", new { projectId = ViewData["projectId"] }, null)
+    </p>
+}
 @if (User.IsInRole("Admin"))
 {
-<p>
-    @Html.ActionLink("Manage User Roles", "Index", "AdminUserView", null, null)
-</p>}
+    <p>
+        @Html.ActionLink("Manage User Roles", "Index", "AdminUserView", null, null)
+    </p>
+}

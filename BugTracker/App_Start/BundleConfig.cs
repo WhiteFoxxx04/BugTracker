@@ -23,7 +23,8 @@ namespace BugTracker
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap-slate.css",
+                      "~/Content/bootstrap-darkly.css",
+                      "~/Content/bootstrap-theme1.css",
                       "~/Content/site.css"));
         }
     }

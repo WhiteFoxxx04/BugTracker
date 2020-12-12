@@ -32,4 +32,6 @@ label.error {
 input.error {
     border: 1px solid red;
 }
-
+listbox-option {
+    color: black
+}
