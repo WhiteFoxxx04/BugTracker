@@ -14,6 +14,6 @@ namespace BugTracker.Models
         public string NewValue { get; set; }
         public DateTimeOffset ChangeDate { get; set; }
         public string Description { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
     }
 }
