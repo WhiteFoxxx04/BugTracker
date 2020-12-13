@@ -45,6 +45,7 @@ namespace BugTracker.Migrations
                 roleManager.Create(new IdentityRole { Name = "Submitter" });
             }
 
+            //Seeded Roles for logins(Hardcoded)
             var userManager = new UserManager<ApplicationUser>(
             new UserStore<ApplicationUser>(context));
             if (!context.Users.Any(u => u.Email == "asgarkhan16@gmail.com"))
@@ -103,6 +104,44 @@ namespace BugTracker.Migrations
 
             var userId4 = userManager.FindByEmail("asgarkhan0405@outlook.com").Id;
             userManager.AddToRole(userId4, "Submitter");
+
+            //seed my ticket statuses, ticket priorities and ticket types
+            List<string> statusList = new List<string> { "New", "Waiting for support", "Waiting for customer", "Resolved", "On hold" };
+            foreach (var status in statusList)
+            {
+                if (!context.TicketStatuses.Any(r => r.Name == status))
+                {
+                    var ts = new TicketStatus();
+                    ts.Name = status;
+                    context.TicketStatuses.Add(ts);
+                    context.SaveChanges();
+                }
+            }
+
+            List<string> priorityList = new List<string> { "High", "Medium", "Low", "Critical" };
+            foreach (var priority in priorityList)
+            {
+                if (!context.TicketPriorities.Any(r => r.Name == priority))
+                {
+                    var tp = new TicketPriority();
+                    tp.Name = priority;
+                    context.TicketPriorities.Add(tp);
+                    context.SaveChanges();
+                }
+            }
+
+            List<string> ticketTypes = new List<string> { "Error report", "Feature request", "Service request", "Other" };
+            foreach (var type in ticketTypes)
+            {
+                if (!context.TicketTypes.Any(r => r.Name == type))
+                {
+                    var tt = new TicketType();
+                    tt.Name = type;
+                    context.TicketTypes.Add(tt);
+                    context.SaveChanges();
+                }
+            }
+
         }
     }
 }

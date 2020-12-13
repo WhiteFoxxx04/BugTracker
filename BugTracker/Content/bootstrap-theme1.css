@@ -104,3 +104,7 @@ table a:not(.btn), .table a:not(.btn) {
         box-shadow: none;
         border: 2px solid #FF8598;
     }
+
+.dropdown-toggle-color, .list-box-styles {
+    color: black;
+}

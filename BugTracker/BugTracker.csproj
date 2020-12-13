@@ -192,65 +192,9 @@
     </Compile>
     <Compile Include="Helpers\ProjectUserHelper.cs" />
     <Compile Include="Helpers\RoleCheckBox.cs" />
-    <Compile Include="Migrations\202012081719272_InitialModel.cs" />
-    <Compile Include="Migrations\202012081719272_InitialModel.Designer.cs">
-      <DependentUpon>202012081719272_InitialModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081723548_TicketPriority.cs" />
-    <Compile Include="Migrations\202012081723548_TicketPriority.Designer.cs">
-      <DependentUpon>202012081723548_TicketPriority.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081724525_TicketType.cs" />
-    <Compile Include="Migrations\202012081724525_TicketType.Designer.cs">
-      <DependentUpon>202012081724525_TicketType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081725141_Project.cs" />
-    <Compile Include="Migrations\202012081725141_Project.Designer.cs">
-      <DependentUpon>202012081725141_Project.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081726009_TicketNotifications.cs" />
-    <Compile Include="Migrations\202012081726009_TicketNotifications.Designer.cs">
-      <DependentUpon>202012081726009_TicketNotifications.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081726326_TicketHistory.cs" />
-    <Compile Include="Migrations\202012081726326_TicketHistory.Designer.cs">
-      <DependentUpon>202012081726326_TicketHistory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081727130_TicketComments.cs" />
-    <Compile Include="Migrations\202012081727130_TicketComments.Designer.cs">
-      <DependentUpon>202012081727130_TicketComments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081727536_TicketAttachments.cs" />
-    <Compile Include="Migrations\202012081727536_TicketAttachments.Designer.cs">
-      <DependentUpon>202012081727536_TicketAttachments.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012081728199_ProjectUsers.cs" />
-    <Compile Include="Migrations\202012081728199_ProjectUsers.Designer.cs">
-      <DependentUpon>202012081728199_ProjectUsers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012082022458_ApplyAnnotationsToProject.cs" />
-    <Compile Include="Migrations\202012082022458_ApplyAnnotationsToProject.Designer.cs">
-      <DependentUpon>202012082022458_ApplyAnnotationsToProject.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012092318407_AnnotationsOnProjects.cs" />
-    <Compile Include="Migrations\202012092318407_AnnotationsOnProjects.designer.cs">
-      <DependentUpon>202012092318407_AnnotationsOnProjects.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012121438100_TicketStatus.cs" />
-    <Compile Include="Migrations\202012121438100_TicketStatus.Designer.cs">
-      <DependentUpon>202012121438100_TicketStatus.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012121455534_PopulateTicketStatus.cs" />
-    <Compile Include="Migrations\202012121455534_PopulateTicketStatus.Designer.cs">
-      <DependentUpon>202012121455534_PopulateTicketStatus.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012121826412_DatatypeChanged.cs" />
-    <Compile Include="Migrations\202012121826412_DatatypeChanged.Designer.cs">
-      <DependentUpon>202012121826412_DatatypeChanged.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202012121837523_PopulateTicketType.cs" />
-    <Compile Include="Migrations\202012121837523_PopulateTicketType.Designer.cs">
-      <DependentUpon>202012121837523_PopulateTicketType.cs</DependentUpon>
+    <Compile Include="Migrations\202012122306005_InitialCommit.cs" />
+    <Compile Include="Migrations\202012122306005_InitialCommit.Designer.cs">
+      <DependentUpon>202012122306005_InitialCommit.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -367,50 +311,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012081719272_InitialModel.resx">
-      <DependentUpon>202012081719272_InitialModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081723548_TicketPriority.resx">
-      <DependentUpon>202012081723548_TicketPriority.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081724525_TicketType.resx">
-      <DependentUpon>202012081724525_TicketType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081725141_Project.resx">
-      <DependentUpon>202012081725141_Project.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081726009_TicketNotifications.resx">
-      <DependentUpon>202012081726009_TicketNotifications.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081726326_TicketHistory.resx">
-      <DependentUpon>202012081726326_TicketHistory.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081727130_TicketComments.resx">
-      <DependentUpon>202012081727130_TicketComments.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081727536_TicketAttachments.resx">
-      <DependentUpon>202012081727536_TicketAttachments.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012081728199_ProjectUsers.resx">
-      <DependentUpon>202012081728199_ProjectUsers.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012082022458_ApplyAnnotationsToProject.resx">
-      <DependentUpon>202012082022458_ApplyAnnotationsToProject.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012092318407_AnnotationsOnProjects.resx">
-      <DependentUpon>202012092318407_AnnotationsOnProjects.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012121438100_TicketStatus.resx">
-      <DependentUpon>202012121438100_TicketStatus.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012121455534_PopulateTicketStatus.resx">
-      <DependentUpon>202012121455534_PopulateTicketStatus.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012121826412_DatatypeChanged.resx">
-      <DependentUpon>202012121826412_DatatypeChanged.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202012121837523_PopulateTicketType.resx">
-      <DependentUpon>202012121837523_PopulateTicketType.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012122306005_InitialCommit.resx">
+      <DependentUpon>202012122306005_InitialCommit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

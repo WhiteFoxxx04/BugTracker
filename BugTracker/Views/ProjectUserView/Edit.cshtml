@@ -11,40 +11,43 @@
             @Html.DisplayFor(model => model.ProjectName, new { htmlAttributes = new { @class = "control-label form-control" } })
         </div>
     </div>
-    @if (Model.UsersAssignedtoProject != null)//this doesn't work in preventing an empty listbox from displaying
-    {
-        using (Html.BeginForm("RemoveUsers", "ProjectUserView", new { pId = Model.ProjectId, usersToRemove = Model.UserToRemove }, FormMethod.Post))
-        {
-        @Html.AntiForgeryToken()
-            <div class="form-group">
-                @Html.Label("Assigned Users", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-2">
-                    @Html.ListBox("UsersToRemove", Model.UsersAssignedtoProject, new { @class = "listbox-option" })
-                    @Html.ValidationMessageFor(model => model.UserToRemove, "", new { @class = "text-danger" })
-                </div>
-                <div class="col-md-2">
-                    <input type="submit" value="Remove Selected Users" name="RemoveUsers" class="btn btn-success" />
-                </div>
-            </div>
-        }
-      }
+
     @if (Model.UsersNotAssignedToProject != null)
     {
         using (Html.BeginForm("AddUsers", "ProjectUserView", new { pId = Model.ProjectId, usersToAdd = Model.UserToAdd }, FormMethod.Post))
         {
-        @Html.AntiForgeryToken()
-            <div class="form-group">
-                @Html.Label("Users to Add", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-2">
-                    @Html.ListBox("UsersToAdd", Model.UsersNotAssignedToProject)
-                    @Html.ValidationMessageFor(model => model.UserToAdd, "", new { @class = "text-danger" })
+            @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @Html.Label("Users to Add", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-2">
+                        @Html.ListBox("UsersToAdd", Model.UsersNotAssignedToProject, new { @class = "listbox-option list-box-styles" })
+                        @Html.ValidationMessageFor(model => model.UserToAdd, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" value="Add Selected Users" name="AddUsers" class="btn btn-success" />
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <input type="submit" value="Add Selected Users" name="AddUsers" class="btn btn-success" />
+         }
+     }
+
+    @if (Model.UsersAssignedtoProject != null)//this doesn't work in preventing an empty listbox from displaying
+    {
+        using (Html.BeginForm("RemoveUsers", "ProjectUserView", new { pId = Model.ProjectId, usersToRemove = Model.UserToRemove }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+                <div class="form-group">
+                    @Html.Label("Assigned Users", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-2">
+                        @Html.ListBox("UsersToRemove", Model.UsersAssignedtoProject, new { @class = "listbox-option list-box-styles" })
+                        @Html.ValidationMessageFor(model => model.UserToRemove, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">
+                        <input type="submit" value="Remove Selected Users" name="RemoveUsers" class="btn btn-success" />
+                    </div>
                 </div>
-            </div>
         }
      }
+
 </div>
 <p>
     @Html.ActionLink("Back to Project Details", "Details", "Projects", new { id = Model.ProjectId }, null)

@@ -21,7 +21,7 @@ namespace BugTracker.ViewModel
         public SelectList TicketTypes { get; set; }
         [Display(Name = "Priority")]
         public SelectList TicketPriorities { get; set; }
-        public SelectList TicketStatuses { get; set; }
+        //public SelectList TicketStatuses { get; set; }
 
         [Required(ErrorMessage = "Please select a project")]
         public int SelectedProject { get; set; }
@@ -29,6 +29,6 @@ namespace BugTracker.ViewModel
         public int SelectedType { get; set; }
         [Required(ErrorMessage = "Please select a priority")]
         public int SelectedPriority { get; set; }
-        public int SelectedStatus { get; set; }
+        //public int SelectedStatus { get; set; }
     }
 }

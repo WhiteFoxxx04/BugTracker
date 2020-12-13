@@ -15,7 +15,7 @@ namespace BugTracker.Controllers
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        //string[] Statuses = { "Waiting for support", "Waiting for customer", "Resolved", "On hold", "New" };
         // GET: Tickets
         public ActionResult Index()
         {
@@ -38,11 +38,13 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize]
         public ActionResult Create()
         {
             var ticketView = new TicketViewModel();
             ticketView.Projects = new SelectList(db.Projects, "Id", "Name");
             ticketView.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name");
+            ticketView.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name");
             //ticketView.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name");
             return View(ticketView);
         }
@@ -52,7 +54,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType")] TicketViewModel viewModel)
+        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
@@ -62,18 +64,16 @@ namespace BugTracker.Controllers
                 ticket.Created = DateTimeOffset.Now;
                 ticket.ProjectId = viewModel.SelectedProject;
                 ticket.TicketTypeId = viewModel.SelectedType;
-                //ticket.TicketPriorityId = viewModel.SelectedPriority;
+                ticket.TicketPriorityId = viewModel.SelectedPriority;
                 var query = from p in db.TicketStatuses
                             where p.Name == "New"
                             select p.Id;
                 ticket.TicketStatusId = query.First();
                 ticket.OwnerUserId = User.Identity.GetUserId();
-
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
             return View(viewModel);
         }
 
