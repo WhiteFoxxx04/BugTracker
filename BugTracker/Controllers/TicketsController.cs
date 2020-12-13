@@ -18,9 +18,40 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Tickets
+        [Authorize]
         public ActionResult Index()
         {
-            return View(db.Tickets.ToList());
+            var id = User.Identity.GetUserId();
+            if (User.IsInRole("Admin"))
+            {
+                return View(db.Tickets.ToList());
+            }
+            if (User.IsInRole("Project Manager"))
+            {
+                var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
+                var projects = query.ToList();
+                var ticketList = new List<Ticket>();
+                if (projects.Count > 0)
+                {
+                    foreach (Project p in projects)
+                    {
+                        var projTickets = p.Tickets;
+                        ticketList.AddRange(projTickets);
+                    }
+                }
+                return View(ticketList);
+            }
+            if (User.IsInRole("Developer"))
+            {
+                var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
+                return View(tickets.ToList());
+            }
+            if (User.IsInRole("Submitter"))
+            {
+                var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
+                return View(tickets.ToList());
+            }
+            return RedirectToAction("Index", "Home", null);
         }
 
         // GET: Tickets/Details/5
@@ -38,33 +69,31 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
-        // GET: Tickets/AssignUser/5
-        [Authorize(Roles = "Admin, ProjectManager")]
+
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult AssignUser(int? id)
         {
-            //if (id == null)
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             Ticket ticket = db.Tickets.Find(id);
             var model = new TicketAssignViewModel();
             model.Ticket = ticket;
-
-            //if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
-            //{
-            //    model.SelectedUser = ticket.AssignedToUserId;
-            //}
+            if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            {
+                model.SelectedUser = ticket.AssignedToUserId;
+            }
             var helper = new ProjectUserHelper();
-            var uIdList = helper.UsersInProject(ticket.ProjectId);
-            var uInfoList = helper.getUserInfo(uIdList);
-
+            var userIDList = helper.UsersInProject(ticket.ProjectId);
+            var userInfoList = helper.getUserInfo(userIDList);
             if (!string.IsNullOrEmpty(model.SelectedUser))
             {
-                model.ProjectUsersList = new SelectList(uInfoList, "UserId", "UserName", model.SelectedUser);
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
             }
             else
             {
-                model.ProjectUsersList = new SelectList(uInfoList, "UserId", "UserName");
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName");
             }
             if (ticket == null)
             {
@@ -73,30 +102,37 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        //
         // POST: Tickets/AssignUser/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AssignUser([Bind(Include = "Ticket,SelectedUser")] TicketAssignViewModel assignViewModel)
+        public ActionResult AssignUser(int tId, string SelectedUser)
         {
             if (ModelState.IsValid)
             {
-                var id = assignViewModel.Ticket.Id;
-                var selected = assignViewModel.SelectedUser;
-                var ticket = db.Tickets.Find(id);
-                ticket.AssignedToUserId = selected;
-                var tn = new TicketNotification { TicketId = id, UserId = selected };
-
-                db.TicketNotifications.Add(tn);
-                db.Entry(ticket).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var ticket = db.Tickets.Find(tId);
+                //if there is already a user assigned, check if it is the same user
+                //if it is, we won't create another ticket notification
+                if (ticket.AssignedToUserId != null && ticket.AssignedToUserId.Equals("Selected User"))
+                {
+                    return RedirectToAction("Index");
+                }
+                //otherwise, update the ticket and create an entry in ticket notification table
+                else
+                {
+                    ticket.AssignedToUserId = SelectedUser;
+                    var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
+                    db.TicketNotifications.Add(tn);
+                    db.Entry(ticket).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             else
             {
-                return View(assignViewModel);
+                return RedirectToAction("AssignUser", new { id = tId });
             }
         }
+
 
         // GET: Tickets/Create
         [Authorize]
@@ -111,21 +147,21 @@ namespace BugTracker.Controllers
         }
 
         // POST: Tickets/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketCreateViewModel viewModel)
+        public ActionResult Create([Bind(Include = "Title,Description,SelectedProject,SelectedType,SelectedPriority")] TicketCreateViewModel tvm)
         {
             if (ModelState.IsValid)
             {
                 var ticket = new Ticket();
-                ticket.Title = viewModel.Title;
-                ticket.Description = viewModel.Description;
+                ticket.Title = tvm.Title;
+                ticket.Description = tvm.Description;
                 ticket.Created = DateTimeOffset.Now;
-                ticket.ProjectId = viewModel.SelectedProject;
-                ticket.TicketTypeId = viewModel.SelectedType;
-                ticket.TicketPriorityId = viewModel.SelectedPriority;
+                ticket.ProjectId = tvm.SelectedProject;
+                ticket.TicketTypeId = tvm.SelectedType;
+                ticket.TicketPriorityId = tvm.SelectedPriority;
                 var query = from p in db.TicketStatuses
                             where p.Name == "New"
                             select p.Id;
@@ -135,7 +171,7 @@ namespace BugTracker.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(viewModel);
+            return View(tvm);
         }
 
         // GET: Tickets/Edit/5

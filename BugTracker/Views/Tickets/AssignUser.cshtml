@@ -1,5 +1,4 @@
 ﻿@model BugTracker.ViewModel.TicketAssignViewModel
-
 @{
     ViewBag.Title = "Assign ticket to user";
 }
@@ -81,6 +80,13 @@
         <dd>
             @Html.DisplayFor(model => model.Ticket.OwnerUserId)
         </dd>
+
+        @*<dt>
+                @Html.DisplayNameFor(model => model.Ticket.AssignedToUserId)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Ticket.AssignedToUserId)
+            </dd>*@
     </dl>
 
     @using (Html.BeginForm("AssignUser", "Tickets", new { tId = Model.Ticket.Id, SelectedUser = Model.SelectedUser }, FormMethod.Post))
@@ -90,17 +96,17 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProjUsersList, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("SelectedUser", Model.ProjUsersList)
-                @*@Html.DropDownListFor(model => model.SelectedUser, Model.ProjUsersList, "-Select User-"*@
+                @*@Html.DropDownList("SelectedUser", Model.ProjUsersList)*@
+                @Html.DropDownListFor(model => model.SelectedUser, Model.ProjUsersList, "-Select User-", new { @class = "form-control", @id = "select" })
                 @Html.ValidationMessageFor(model => model.SelectedUser, "", new { @class = "text-danger" })
             </div>
-
             <div class="col-md-2">
                 <input type="submit" value="Assign Ticket to User" class="btn btn-default" />
             </div>
         </div>
     }
 </div>
+
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>
