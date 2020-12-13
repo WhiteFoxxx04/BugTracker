@@ -1,4 +1,4 @@
-﻿@model BugTracker.ViewModel.TicketViewModel
+﻿@model BugTracker.ViewModel.TicketCreateViewModel
 @{
     ViewBag.Title = "Create";
 }
@@ -31,7 +31,6 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Projects, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("SelectedProject", Model.Projects, "-Select Project-")*@
                 @Html.DropDownListFor(m => m.SelectedProject, Model.Projects, "-Select Project-", new { @class = "form-control", @id = "select" })
                 @Html.ValidationMessageFor(model => model.SelectedProject, "", new { @class = "text-danger" })
             </div>
@@ -40,7 +39,6 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TicketTypes, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("SelectedType", Model.TicketTypes, "-Select Type-")*@
                 @Html.DropDownListFor(m => m.SelectedType, Model.TicketTypes, "-Select Type-", new { @class = "form-control", @id = "select" })
                 @Html.ValidationMessageFor(model => model.SelectedType, "", new { @class = "text-danger" })
             </div>
@@ -49,7 +47,6 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TicketPriorities, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.DropDownList("SelectedPriority", Model.TicketPriorities, "-Select Priority-")*@
                 @Html.DropDownListFor(m => m.SelectedPriority, Model.TicketPriorities, "-Select Priority-", new { @class = "form-control", @id = "select" })
                 @Html.ValidationMessageFor(model => model.SelectedPriority, "", new { @class = "text-danger" })
             </div>
