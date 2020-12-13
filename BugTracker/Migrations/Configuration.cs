@@ -59,12 +59,12 @@ namespace BugTracker.Migrations
                 }, "Welcome@123");
             }
 
-            if (!context.Users.Any(u => u.Email == "mariobros8828@gmail.com"))
+            if (!context.Users.Any(u => u.Email == "mariobros@gmail.com"))
             {
                 userManager.Create(new ApplicationUser
                 {
-                    UserName = "mariobros8828@gmail.com",
-                    Email = "mariobros8828@gmail.com",
+                    UserName = "mariobros@gmail.com",
+                    Email = "mariobros@gmail.com",
                     FirstName = "Mario",
                     LastName = "Khan",
                 }, "Welcome@123");
@@ -96,7 +96,7 @@ namespace BugTracker.Migrations
             var userId = userManager.FindByEmail("asgarkhan16@gmail.com").Id;
             userManager.AddToRole(userId, "Admin");
 
-            var userId2 = userManager.FindByEmail("mariobros8828@gmail.com").Id;
+            var userId2 = userManager.FindByEmail("mariobros@gmail.com").Id;
             userManager.AddToRole(userId2, "Project Manager");
 
             var userId3 = userManager.FindByEmail("dvlprkhn@gmail.com").Id;

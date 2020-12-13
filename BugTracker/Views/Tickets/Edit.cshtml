@@ -1,4 +1,5 @@
 ﻿@model BugTracker.ViewModel.TicketEditViewModel
+
 @{
     ViewBag.Title = "Edit";
 }
@@ -15,8 +16,8 @@
     @Html.HiddenFor(model => model.Id)
     @Html.HiddenFor(model => model.Created)
     @Html.HiddenFor(model => model.Updated)
-    @Html.HiddenFor(model => model.OwnerUserId)
-    @Html.HiddenFor(model => model.AssignedToUserId)
+    @*@Html.HiddenFor(model => model.OwnerUserId)
+    @Html.HiddenFor(model => model.AssignedToUserId)*@
 
     <div class="form-group">
         @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -67,15 +68,15 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.AssignedToUserId, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.AssignedToUserName, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @if (Model.AssignedToUserId == null)
+            @if (Model.AssignedToUserName == null)
             {
                 @Html.Raw("Unassigned")
             }
             else
             {
-                @Html.DisplayFor(model => model.AssignedToUserId)
+                @Html.DisplayFor(model => model.AssignedToUserName)
             }
             @if (User.IsInRole("Project Manager") || User.IsInRole("Admin"))
             {

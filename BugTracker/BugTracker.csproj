@@ -217,6 +217,7 @@
     <Compile Include="ViewModel\ProjectUserViewModel.cs" />
     <Compile Include="ViewModel\TicketAssignViewModel.cs" />
     <Compile Include="ViewModel\TicketCreateViewModel.cs" />
+    <Compile Include="ViewModel\TicketDetailsViewModel.cs" />
     <Compile Include="ViewModel\TicketEditViewModel.cs" />
     <Compile Include="ViewModel\UserInfoViewModel.cs" />
   </ItemGroup>
@@ -291,11 +292,12 @@
     <Content Include="Views\ProjectUserView\Edit.cshtml" />
     <Content Include="Views\Shared\_ShowProjectUsers.cshtml" />
     <Content Include="Views\Tickets\Delete.cshtml" />
-    <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Index.cshtml" />
     <Content Include="Views\Tickets\Create.cshtml" />
     <Content Include="Views\Tickets\Edit.cshtml" />
     <Content Include="Views\Tickets\AssignUser.cshtml" />
+    <Content Include="Views\Tickets\All.cshtml" />
+    <Content Include="Views\Tickets\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

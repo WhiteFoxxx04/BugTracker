@@ -22,9 +22,11 @@ namespace BugTracker.Controllers
         public ActionResult Index()
         {
             var id = User.Identity.GetUserId();
+            var ticketDetailsList = new List<TicketDetailsViewModel>();
             if (User.IsInRole("Admin"))
             {
-                return View(db.Tickets.ToList());
+                ticketDetailsList = transformTickets(db.Tickets.ToList());
+                return View(ticketDetailsList);
             }
             if (User.IsInRole("Project Manager"))
             {
@@ -39,22 +41,37 @@ namespace BugTracker.Controllers
                         ticketList.AddRange(projTickets);
                     }
                 }
-                return View(ticketList);
+                var pmTicketDetailsList = transformTickets(ticketList);
+                ticketDetailsList.AddRange(pmTicketDetailsList);
             }
             if (User.IsInRole("Developer"))
             {
                 var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
-                return View(tickets.ToList());
+                var devDetailsList = transformTickets(tickets.ToList());
+                ticketDetailsList.AddRange(devDetailsList);
             }
             if (User.IsInRole("Submitter"))
             {
                 var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
-                return View(tickets.ToList());
+                var subDetailsList = transformTickets(tickets.ToList());
+                ticketDetailsList.AddRange(subDetailsList);
             }
-            return RedirectToAction("Index", "Home", null);
+            return View(ticketDetailsList);
+        }
+
+        private List<TicketDetailsViewModel> transformTickets(List<Ticket> lists)
+        {
+            var ticketDetailsList = new List<TicketDetailsViewModel>();
+            foreach (var ticket in lists)
+            {
+                var tdTicket = new TicketDetailsViewModel(ticket);
+                ticketDetailsList.Add(tdTicket);
+            }
+            return ticketDetailsList;
         }
 
         // GET: Tickets/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -66,7 +83,8 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(ticket);
+            var model = new TicketDetailsViewModel(ticket);
+            return View(model);
         }
 
 
@@ -79,14 +97,14 @@ namespace BugTracker.Controllers
             }
             Ticket ticket = db.Tickets.Find(id);
             var model = new TicketAssignViewModel();
-            model.Ticket = ticket;
+            model.TicketDetails = new TicketDetailsViewModel(ticket);
             if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
             {
                 model.SelectedUser = ticket.AssignedToUserId;
             }
             var helper = new ProjectUserHelper();
-            var userIDList = helper.UsersInProject(ticket.ProjectId);
-            var userInfoList = helper.getUserInfo(userIDList);
+            var uIdList = helper.UsersInProject(ticket.ProjectId);
+            var userInfoList = helper.getUserInfo(uIdList);
             if (!string.IsNullOrEmpty(model.SelectedUser))
             {
                 model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
@@ -200,8 +218,16 @@ namespace BugTracker.Controllers
                 ticketEdit.SelectedType = ticket.TicketTypeId;
                 ticketEdit.SelectedPriority = ticket.TicketPriorityId;
                 ticketEdit.SelectedStatus = ticket.TicketStatusId;
-                ticketEdit.OwnerUserId = ticket.OwnerUserId;
-                ticketEdit.AssignedToUserId = ticket.AssignedToUserId;
+                //ticketEdit.OwnerUserId = ticket.OwnerUserId;
+                if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+                {
+                    var assignedTo = db.Users.Find(ticket.AssignedToUserId);
+                    ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
+                }
+                else
+                {
+                    ticketEdit.AssignedToUserName = "Unassigned";
+                }
 
                 ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
                 ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
@@ -231,8 +257,8 @@ namespace BugTracker.Controllers
                 ticket.TicketTypeId = tevModel.SelectedType;
                 ticket.TicketPriorityId = tevModel.SelectedPriority;
                 ticket.TicketStatusId = tevModel.SelectedStatus;
-                ticket.OwnerUserId = tevModel.OwnerUserId;
-                ticket.AssignedToUserId = tevModel.AssignedToUserId;
+                //ticket.OwnerUserId = tevModel.OwnerUserId;
+                //ticket.AssignedToUserId = tevModel.AssignedToUserId;
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
@@ -242,6 +268,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

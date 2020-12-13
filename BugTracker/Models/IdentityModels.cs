@@ -70,5 +70,7 @@ namespace BugTracker.Models
         public DbSet<TicketStatus> TicketStatuses { get; set; }
 
         public System.Data.Entity.DbSet<BugTracker.ViewModel.TicketEditViewModel> TicketEditViewModels { get; set; }
+
+        public System.Data.Entity.DbSet<BugTracker.ViewModel.TicketDetailsViewModel> TicketDetailsViewModels { get; set; }
     }
 }

@@ -10,8 +10,8 @@ namespace BugTracker.ViewModel
 {
     public class TicketAssignViewModel
     {
-        public Ticket Ticket { get; set; }
-        [Display(Name = "Project")]
+        public TicketDetailsViewModel TicketDetails { get; set; }
+        [Display(Name = "Assigned User")]
         public SelectList ProjUsersList { get; set; }
         [Required(ErrorMessage = "No user selected")]
         public string SelectedUser { get; set; }

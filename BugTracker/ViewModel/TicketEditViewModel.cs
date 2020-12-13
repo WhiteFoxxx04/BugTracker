@@ -21,17 +21,17 @@ namespace BugTracker.ViewModel
         //public int TicketTypeId { get; set; }
         //public int TicketPriorityId { get; set; }
         //public int TicketStatusId { get; set; }
-        public string OwnerUserId { get; set; }
+        //public string OwnerUserId { get; set; }
         [Display(Name ="Assigned to")]
-        public string AssignedToUserId { get; set; }
+        public string AssignedToUserName { get; set; }
 
-        [Display(Name ="Projects")]
+        [Display(Name ="Project")]
         public SelectList Projects { get; set; }
         [Display(Name ="Type")]
         public SelectList TicketTypes { get; set; }
         [Display(Name ="Priority")]
         public SelectList TicketPriorities { get; set; }
-        [Display(Name ="Ticket Status")]
+        [Display(Name ="Status")]
         public SelectList TicketStatuses { get; set; }
 
         [Required(ErrorMessage = "Please select a project")]

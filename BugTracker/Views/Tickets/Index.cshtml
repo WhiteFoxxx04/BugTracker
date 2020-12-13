@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BugTracker.Models.Ticket>
+﻿@model IEnumerable<BugTracker.ViewModel.TicketDetailsViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -14,9 +14,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.Description)
-        </th>
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Created)
         </th>
@@ -24,24 +24,26 @@
             @Html.DisplayNameFor(model => model.Updated)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ProjectId)
+            @Html.DisplayNameFor(model => model.ProjectTitle)
         </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.TicketTypeId)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.TicketPriority)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TicketPriorityId)
+            @Html.DisplayNameFor(model => model.TicketStatus)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TicketStatusId)
-        </th>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.OwnerUserId)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.AssignedToUserName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.AssignedToUserId)
+            @Html.Label("Actions")
         </th>
-        <th></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -49,37 +51,45 @@
         <td>
             @Html.DisplayFor(modelItem => item.Title)
         </td>
+        @*<td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>*@
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            @*@Html.DisplayFor(modelItem => item.Created)*@
+            @*@item.Created.ToLocalTime().ToString("M/d/yy h:mm tt") //this works to display local time but
+                //will use the same method I used to display update time to be consistent*@
+            @TimeZoneInfo.ConvertTime(item.Created, TimeZoneInfo.Local).ToString("M/d/yy h:mm tt")
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Created)
+            @*@Html.DisplayFor(modelItem => item.Updated)*@
+            @if (item.Updated != null)
+            {
+                @TimeZoneInfo.ConvertTime((DateTimeOffset)item.Updated, TimeZoneInfo.Local).ToString("M/d/yy h:mm tt")
+                @*@item.Updated.ToLocalTime().ToString("M/d/yy h:mm tt")// this doesn't work with a nullable DateTimeOffset*@
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Updated)
+            @Html.DisplayFor(modelItem => item.ProjectTitle)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ProjectId)
-        </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.TicketTypeId)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.TicketPriority)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.TicketPriorityId)
+            @Html.DisplayFor(modelItem => item.TicketStatus)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TicketStatusId)
-        </td>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.OwnerUserId)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.AssignedToUserName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.AssignedToUserId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
         </td>
     </tr>
 }
