@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using BugTracker.Helpers;
 using BugTracker.Models;
 using BugTracker.ViewModel;
 using Microsoft.AspNet.Identity;
@@ -15,7 +16,7 @@ namespace BugTracker.Controllers
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        //string[] Statuses = { "Waiting for support", "Waiting for customer", "Resolved", "On hold", "New" };
+
         // GET: Tickets
         public ActionResult Index()
         {
@@ -35,6 +36,66 @@ namespace BugTracker.Controllers
                 return HttpNotFound();
             }
             return View(ticket);
+        }
+
+        // GET: Tickets/AssignUser/5
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public ActionResult AssignUser(int? id)
+        {
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
+            Ticket ticket = db.Tickets.Find(id);
+            var model = new TicketAssignViewModel();
+            model.Ticket = ticket;
+
+            //if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+            //{
+            //    model.SelectedUser = ticket.AssignedToUserId;
+            //}
+            var helper = new ProjectUserHelper();
+            var uIdList = helper.UsersInProject(ticket.ProjectId);
+            var uInfoList = helper.getUserInfo(uIdList);
+
+            if (!string.IsNullOrEmpty(model.SelectedUser))
+            {
+                model.ProjectUsersList = new SelectList(uInfoList, "UserId", "UserName", model.SelectedUser);
+            }
+            else
+            {
+                model.ProjectUsersList = new SelectList(uInfoList, "UserId", "UserName");
+            }
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+        //
+        // POST: Tickets/AssignUser/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AssignUser([Bind(Include = "Ticket,SelectedUser")] TicketAssignViewModel assignViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var id = assignViewModel.Ticket.Id;
+                var selected = assignViewModel.SelectedUser;
+                var ticket = db.Tickets.Find(id);
+                ticket.AssignedToUserId = selected;
+                var tn = new TicketNotification { TicketId = id, UserId = selected };
+
+                db.TicketNotifications.Add(tn);
+                db.Entry(ticket).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(assignViewModel);
+            }
         }
 
         // GET: Tickets/Create
