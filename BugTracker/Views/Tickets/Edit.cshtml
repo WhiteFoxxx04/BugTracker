@@ -70,19 +70,16 @@
     <div class="form-group">
         @Html.LabelFor(model => model.AssignedToUserName, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @if (Model.AssignedToUserName == null)
-            {
-                @Html.Raw("Unassigned")
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.AssignedToUserName)
-            }
-            @if (User.IsInRole("Project Manager") || User.IsInRole("Admin"))
-            {
-                @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-                @Html.ActionLink("Edit", "AssignUser", new { id = Model.Id }, new { htmlAttributes = new { @class = "form-control" } })
-            }
+            <!--don't need to check for null case, we assign string "unassigned" in controller for nulls-->
+            @*@Html.DisplayFor(model => model.AssignedToUserName)*@
+            <p class="not-editable">
+                @Model.AssignedToUserName
+                @if (User.IsInRole("Project Manager") || User.IsInRole("Admin"))
+                {
+                    @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+                    @Html.ActionLink("Edit", "AssignUser", new { id = Model.Id }, new { htmlAttributes = new { @class = "form-control" } })
+                }
+            </p>
         </div>
     </div>
 

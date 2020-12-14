@@ -108,3 +108,7 @@ table a:not(.btn), .table a:not(.btn) {
 .dropdown-toggle-color, .list-box-styles {
     color: black;
 }
+
+.not-editable {
+    margin-top: 7px !important;
+}

@@ -23,11 +23,13 @@ namespace BugTracker.Controllers
         {
             var id = User.Identity.GetUserId();
             var ticketDetailsList = new List<TicketDetailsViewModel>();
+            //For Admin Users View all Tickets
             if (User.IsInRole("Admin"))
             {
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
                 return View(ticketDetailsList);
             }
+            //Otherwise go through each role
             if (User.IsInRole("Project Manager"))
             {
                 var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
@@ -280,7 +282,8 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(ticket);
+            var model = new TicketDetailsViewModel(ticket);
+            return View(model);
         }
 
         // POST: Tickets/Delete/5
