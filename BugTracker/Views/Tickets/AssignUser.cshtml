@@ -25,7 +25,7 @@
             @Html.DisplayFor(model => model.TicketDetails.Description)
         </dd>
 
-        <dt>
+        @*<dt>
             @Html.DisplayNameFor(model => model.TicketDetails.Created)
         </dt>
 
@@ -42,7 +42,7 @@
             {
                 @TimeZoneInfo.ConvertTime((DateTimeOffset)Model.TicketDetails.Updated, TimeZoneInfo.Local).ToString("M/d/yy h:mm tt")
             }
-        </dd>
+        </dd>*@
 
         <dt>
             @Html.DisplayNameFor(model => model.TicketDetails.ProjectTitle)
@@ -102,14 +102,15 @@
                 @*@Html.DropDownList("SelectedUser", Model.ProjUsersList)*@
                 @Html.DropDownListFor(model => model.SelectedUser, Model.ProjUsersList, "-Select User-", new { @class = "form-control", @id = "select"})
                 @Html.ValidationMessageFor(model => model.SelectedUser, "", new { @class = "text-danger" })
-            </div>
-
-            <div class="col-md-2">
-                <input type="submit" value="Assign Ticket to User" class="btn btn-default" />
+                @Html.Raw("<br/>")
+                <input type="submit" value="Assign Ticket to User" class="btn btn-default"/>
             </div>
         </div>
     }
 </div>
 <p>
+    @*<div class="col-md-2">
+        <input type="submit" value="Assign Ticket to User" class="btn btn-default" />
+    </div>*@
     @Html.ActionLink("Back to List", "Index")
 </p>
