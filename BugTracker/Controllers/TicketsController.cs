@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Helpers;
@@ -157,6 +158,29 @@ namespace BugTracker.Controllers
             }
         }
 
+        public async Task SendNotificationEmail(string userId, string ticketTitle)
+        {
+            var url = "https://localhost:44371/Tickets";
+            //var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
+            ApplicationUser user = db.Users.Find(userId);
+            var es = new EmailService();
+            _ = es.SendAsync(new IdentityMessage
+            {
+                Destination = user.Email,
+                Subject = "New Ticket - " + ticketTitle,
+                Body = "You have been assigned a new ticket. Click <a href=\"" + url + "\">here</a> to view your assigned ticket."
+            });
+            //await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
+
+            // Here we should direct the assigner to a confirmation page that says - the email was sent or the email was not sent
+            //return RedirectToAction("Index");
+            //not sure what to do here - I don't really want to return a redirect once the email is sent
+        }
+
+        public ActionResult ConfirmAssignment()
+        {
+            return View();
+        }
 
         // GET: Tickets/Create
         [Authorize]

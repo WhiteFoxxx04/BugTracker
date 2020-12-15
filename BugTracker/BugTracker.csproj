@@ -304,6 +304,7 @@
     <Content Include="Views\Tickets\All.cshtml" />
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Delete.cshtml" />
+    <Content Include="Views\Tickets\ConfirmAssignment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
