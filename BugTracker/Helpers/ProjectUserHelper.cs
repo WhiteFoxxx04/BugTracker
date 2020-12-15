@@ -134,29 +134,6 @@ namespace BugTracker.Helpers
             }
             return notStrings;
         }
-
-        //return a list of developers in a project
-        public List<string> DevelopersInProject(int projectId)
-        {
-            var query = from d in db.ProjectUsers
-                        where d.ProjectId == projectId
-                        select d.UserId;
-
-            var rolesHelper = new UserRolesHelper();
-            var developersList = new List<string>();
-
-            foreach (var d in query)
-            {
-                //for each user in the project, check if they are a developer
-                if (rolesHelper.IsUserInRole(d, "Developer"))
-                {
-                    developersList.Add(d);
-                }
-            }
-            return developersList;
-        }
-
-
         public List<UserInfoViewModel> getUserInfo(List<string> userIds)
         {
             //set up a list to contain user info objects

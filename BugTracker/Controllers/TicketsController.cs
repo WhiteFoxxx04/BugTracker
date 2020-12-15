@@ -6,13 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using BugTracker.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System.Threading.Tasks;
-using BugTracker.ViewModel;
 using BugTracker.Helpers;
-
+using BugTracker.Models;
+using BugTracker.ViewModel;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -26,18 +23,14 @@ namespace BugTracker.Controllers
         {
             var id = User.Identity.GetUserId();
             var ticketDetailsList = new List<TicketDetailsViewModel>();
-
-            // if admin, view all tickets
+            //For Admin Users View all Tickets
             if (User.IsInRole("Admin"))
             {
-                var tickets = db.Tickets;
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
-                ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
                 return View(ticketDetailsList);
             }
-            //otherwise, go through each role a user can be in and add the tickets that can be viewed in each
-            //this does allow duplicates - tried Union but need to work on equality operator
-            else if (User.IsInRole("Project Manager"))
+            //Otherwise go through each role
+            if (User.IsInRole("Project Manager"))
             {
                 var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
                 var projects = query.ToList();
@@ -65,61 +58,13 @@ namespace BugTracker.Controllers
                 var subDetailsList = transformTickets(tickets.ToList());
                 ticketDetailsList.AddRange(subDetailsList);
             }
-            ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
             return View(ticketDetailsList);
         }
 
-        public ActionResult All()
-        {
-            var id = User.Identity.GetUserId();
-            var ticketDetailsList = new List<TicketDetailsViewModel>();
-
-            // if admin, view all tickets
-            if (User.IsInRole("Admin"))
-            {
-                var tickets = db.Tickets;
-                ticketDetailsList = transformTickets(db.Tickets.ToList());
-                ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
-                return View(ticketDetailsList);
-            }
-            //otherwise, go through each role a user can be in and add the tickets that can be viewed in each
-            //this does allow duplicates - tried Union but need to work on equality operator
-            else if (User.IsInRole("Project Manager"))
-            {
-                var query = db.Projects.Where(x => x.ProjectUsers.Any(y => y.UserId == id));
-                var projects = query.ToList();
-                var ticketList = new List<Ticket>();
-                if (projects.Count > 0)
-                {
-                    foreach (Project p in projects)
-                    {
-                        var projTickets = p.Tickets;
-                        ticketList.AddRange(projTickets);
-                    }
-                }
-                var pmTicketDetailsList = transformTickets(ticketList);
-                ticketDetailsList.AddRange(pmTicketDetailsList);
-            }
-            if (User.IsInRole("Developer"))
-            {
-                var tickets = db.Tickets.Where(x => x.AssignedToUserId == id);
-                var devDetailsList = transformTickets(tickets.ToList());
-                ticketDetailsList.AddRange(devDetailsList);
-            }
-            if (User.IsInRole("Submitter"))
-            {
-                var tickets = db.Tickets.Where(x => x.OwnerUserId == id);
-                var subDetailsList = transformTickets(tickets.ToList());
-                ticketDetailsList.AddRange(subDetailsList);
-            }
-            ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
-            return View(ticketDetailsList);
-        }
-
-        public List<TicketDetailsViewModel> transformTickets(List<Ticket> ticketList)
+        private List<TicketDetailsViewModel> transformTickets(List<Ticket> lists)
         {
             var ticketDetailsList = new List<TicketDetailsViewModel>();
-            foreach (var ticket in ticketList)
+            foreach (var ticket in lists)
             {
                 var tdTicket = new TicketDetailsViewModel(ticket);
                 ticketDetailsList.Add(tdTicket);
@@ -145,7 +90,6 @@ namespace BugTracker.Controllers
         }
 
 
-        // GET: Tickets/AssignUser/5
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult AssignUser(int? id)
         {
@@ -153,35 +97,27 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //check that project manager is assigning a ticket that is one of their project
-            var helper = new ProjectUserHelper();
-            var userId = User.Identity.GetUserId();
-            var model = new TicketAssignViewModel();
             Ticket ticket = db.Tickets.Find(id);
-
-            if (!helper.IsUserInProject(userId, ticket.ProjectId))
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
+            var model = new TicketAssignViewModel();
             model.TicketDetails = new TicketDetailsViewModel(ticket);
             if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
             {
                 model.SelectedUser = ticket.AssignedToUserId;
             }
-            var developerIDList = helper.DevelopersInProject(ticket.ProjectId);
-            var developerInfoList = helper.getUserInfo(developerIDList);
+            var helper = new ProjectUserHelper();
+            var uIdList = helper.UsersInProject(ticket.ProjectId);
+            var userInfoList = helper.getUserInfo(uIdList);
             if (!string.IsNullOrEmpty(model.SelectedUser))
             {
-                model.ProjUsersList = new SelectList(developerInfoList, "UserId", "UserName", model.SelectedUser);
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName", model.SelectedUser);
             }
             else
             {
-                model.ProjUsersList = new SelectList(developerInfoList, "UserId", "UserName");
+                model.ProjUsersList = new SelectList(userInfoList, "UserId", "UserName");
             }
             if (ticket == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound();
             }
             return View(model);
         }
@@ -200,26 +136,17 @@ namespace BugTracker.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-                //otherwise, 
-                //- update the ticket
-                //- create an entry in ticket notification table
-                //- send an email to the developer who has been assigned the ticket
-                //- if status is New, change to "Waiting for Support"
+                //otherwise, update the ticket and create an entry in ticket notification table
                 else
                 {
                     ticket.AssignedToUserId = SelectedUser;
                     var tn = new TicketNotification { TicketId = tId, UserId = SelectedUser };
                     db.TicketNotifications.Add(tn);
-
-                    //think of a way to change the status ID here without using the ID numbers - 
-                    //otherwise this is going to look very opaque to future developers
-                    UpdateTicketStatusIfNew(tId);
-
                     db.Entry(ticket).State = EntityState.Modified;
                     db.SaveChanges();
 
                     var ticketTitle = ticket.Title;
-                    _ = SendNotificationEmail(SelectedUser, ticketTitle);
+                    SendNotificationEmail(SelectedUser, ticketTitle);
 
                     return RedirectToAction("ConfirmAssignment");
                 }
@@ -230,43 +157,9 @@ namespace BugTracker.Controllers
             }
         }
 
-        public async Task SendNotificationEmail(string userId, string ticketTitle)
-        {
-            var url = "http://aarrigucci-bugtracker.azurewebsites.net/tickets";
-            //var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(db));
-            ApplicationUser user = db.Users.Find(userId);
-            var es = new EmailService();
-            _ = es.SendAsync(new IdentityMessage
-            {
-                Destination = user.Email,
-                Subject = "New Ticket - " + ticketTitle,
-                Body = "You have been assigned a new ticket. Click <a href=\"" + url + "\">here</a> to view your assigned ticket."
-            });
-            //await userManager.SendEmailAsync(userId, "New Ticket - " + ticketTitle, "You have been assigned a new ticket. Click <a href=\"" + callbackUrl + "\">here</a> to view your assigned ticket.");
-
-            // Here we should direct the assigner to a confirmation page that says - the email was sent or the email was not sent
-            //return RedirectToAction("Index");
-            //not sure what to do here - I don't really want to return a redirect once the email is sent
-        }
-
-        public void UpdateTicketStatusIfNew(int tId)
-        {
-            var ticket = db.Tickets.Find(tId);
-            var status = db.TicketStatuses.Find(ticket.TicketStatusId);
-            if (status.Name == "New")
-            {
-                var newStatus = db.TicketStatuses.FirstOrDefault(x => x.Name == "Waiting for support");
-                ticket.TicketStatusId = newStatus.Id;
-            }
-        }
-
-        public ActionResult ConfirmAssignment()
-        {
-            return View();
-        }
 
         // GET: Tickets/Create
-        [Authorize(Roles ="Submitter")]
+        [Authorize]
         public ActionResult Create()
         {
             var ticketView = new TicketCreateViewModel();
@@ -306,69 +199,50 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Edit/5
-        [Authorize(Roles = "Developer, Project Manager, Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
             Ticket ticket = db.Tickets.Find(id);
-            var userId = User.Identity.GetUserId();
-            var helper = new ProjectUserHelper();
-
             if (ticket == null)
             {
                 return HttpNotFound();
             }
-
-            //verify that the user can edit this ticket - it is a ticket in one of their assigned projects
-            if (User.IsInRole("Project Manager"))
-            {
-                if (!helper.IsUserInProject(userId, ticket.ProjectId))
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-            }
-            //same for developer - verify that they have been assigned this ticket and can edit it
-            if (User.IsInRole("Developer"))
-            {
-                if (!ticket.AssignedToUserId.Equals(userId))
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-            }
-
-            var ticketEdit = new TicketEditViewModel();
-            ticketEdit.Id = ticket.Id;
-            ticketEdit.Title = ticket.Title;
-            ticketEdit.Created = ticket.Created;
-            ticketEdit.Updated = ticket.Updated;
-            ticketEdit.Description = ticket.Description;
-
-            //setting the default selected values of the TicketEditViewModel to the current values in the ticket
-            ticketEdit.SelectedProject = ticket.ProjectId;
-            ticketEdit.SelectedType = ticket.TicketTypeId;
-            ticketEdit.SelectedPriority = ticket.TicketPriorityId;
-            ticketEdit.SelectedStatus = ticket.TicketStatusId;
-            //ticketEdit.OwnerUserId = ticket.OwnerUserId;
-            if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
-            {
-                var assignedTo = db.Users.Find(ticket.AssignedToUserId);
-                ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
-            }
             else
             {
-                ticketEdit.AssignedToUserName = "Unassigned";
+                var ticketEdit = new TicketEditViewModel();
+                ticketEdit.Id = ticket.Id;
+                ticketEdit.Title = ticket.Title;
+                ticketEdit.Created = ticket.Created;
+                ticketEdit.Updated = ticket.Updated;
+                ticketEdit.Description = ticket.Description;
+
+                //setting the default selected values of the TicketEditViewModel to the current values in the ticket
+                ticketEdit.SelectedProject = ticket.ProjectId;
+                ticketEdit.SelectedType = ticket.TicketTypeId;
+                ticketEdit.SelectedPriority = ticket.TicketPriorityId;
+                ticketEdit.SelectedStatus = ticket.TicketStatusId;
+                //ticketEdit.OwnerUserId = ticket.OwnerUserId;
+                if (!string.IsNullOrEmpty(ticket.AssignedToUserId))
+                {
+                    var assignedTo = db.Users.Find(ticket.AssignedToUserId);
+                    ticketEdit.AssignedToUserName = assignedTo.FirstName + " " + assignedTo.LastName;
+                }
+                else
+                {
+                    ticketEdit.AssignedToUserName = "Unassigned";
+                }
+
+                ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
+                ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
+                ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.SelectedPriority);//ticket.TicketPriorityId
+                ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.SelectedStatus);//ticket.TicketStatusId
+
+                return View(ticketEdit);
             }
 
-            ticketEdit.Projects = new SelectList(db.Projects, "Id", "Name", ticketEdit.SelectedProject);//ticket.ProjectId
-            ticketEdit.TicketTypes = new SelectList(db.TicketTypes, "Id", "Name", ticketEdit.SelectedType);//ticket.TicketTypeId
-            ticketEdit.TicketPriorities = new SelectList(db.TicketPriorities, "Id", "Name", ticketEdit.SelectedPriority);//ticket.TicketPriorityId
-            ticketEdit.TicketStatuses = new SelectList(db.TicketStatuses, "Id", "Name", ticketEdit.SelectedStatus);//ticket.TicketStatusId
-
-            return View(ticketEdit);
         }
 
         // POST: Tickets/Edit/5
@@ -376,7 +250,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,SelectedProject,SelectedType,SelectedPriority,SelectedStatus")] TicketEditViewModel tevModel)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,Created,Updated,SelectedProject,SelectedType,SelectedPriority,SelectedStatus,OwnerUserId,AssignedToUserId")] TicketEditViewModel tevModel)
         {
             if (ModelState.IsValid)
             {
