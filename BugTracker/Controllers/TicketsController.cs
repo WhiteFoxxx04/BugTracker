@@ -219,7 +219,7 @@ namespace BugTracker.Controllers
                     db.SaveChanges();
 
                     var ticketTitle = ticket.Title;
-                    SendNotificationEmail(SelectedUser, ticketTitle);
+                    _ = SendNotificationEmail(SelectedUser, ticketTitle);
 
                     return RedirectToAction("ConfirmAssignment");
                 }
