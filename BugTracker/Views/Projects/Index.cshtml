@@ -36,6 +36,7 @@
             </td>
             <td>
                 @Html.ActionLink("Details", "Details", new { id = item.Id })
+
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                 {
                     @Html.Raw(" | ")

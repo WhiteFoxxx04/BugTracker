@@ -30,7 +30,8 @@
          }
      }
 
-    @if (Model.UsersAssignedtoProject != null)//this doesn't work in preventing an empty listbox from displaying
+    @*this doesn't work in preventing an empty listbox from displaying*@
+    @if (Model.UsersAssignedtoProject != null)
     {
         using (Html.BeginForm("RemoveUsers", "ProjectUserView", new { pId = Model.ProjectId, usersToRemove = Model.UserToRemove }, FormMethod.Post))
         {

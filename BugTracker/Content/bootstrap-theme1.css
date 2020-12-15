@@ -112,3 +112,11 @@ table a:not(.btn), .table a:not(.btn) {
 .not-editable {
     margin-top: 7px !important;
 }
+
+.control-label {
+    padding-top: 0 !important;
+}
+
+.form-horizontal {
+    padding-top: 0 !important;
+}
