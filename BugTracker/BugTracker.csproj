@@ -192,9 +192,9 @@
     </Compile>
     <Compile Include="Helpers\ProjectUserHelper.cs" />
     <Compile Include="Helpers\RoleCheckBox.cs" />
-    <Compile Include="Migrations\202012122306005_InitialCommit.cs" />
-    <Compile Include="Migrations\202012122306005_InitialCommit.Designer.cs">
-      <DependentUpon>202012122306005_InitialCommit.cs</DependentUpon>
+    <Compile Include="Migrations\202012151211518_InitialCommit.cs" />
+    <Compile Include="Migrations\202012151211518_InitialCommit.Designer.cs">
+      <DependentUpon>202012151211518_InitialCommit.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -304,6 +304,7 @@
     <Content Include="Views\Tickets\All.cshtml" />
     <Content Include="Views\Tickets\Details.cshtml" />
     <Content Include="Views\Tickets\Delete.cshtml" />
+    <Content Include="Views\Tickets\ConfirmAssignment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -322,8 +323,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202012122306005_InitialCommit.resx">
-      <DependentUpon>202012122306005_InitialCommit.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202012151211518_InitialCommit.resx">
+      <DependentUpon>202012151211518_InitialCommit.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

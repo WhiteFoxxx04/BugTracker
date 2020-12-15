@@ -156,6 +156,53 @@ namespace BugTracker.Migrations
                 .Index(t => t.RoleId);
             
             CreateTable(
+                "dbo.TicketDetailsViewModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Title = c.String(),
+                        Description = c.String(),
+                        Created = c.DateTimeOffset(nullable: false, precision: 7),
+                        Updated = c.DateTimeOffset(precision: 7),
+                        ProjectTitle = c.String(),
+                        TicketType = c.String(),
+                        TicketPriority = c.String(),
+                        TicketStatus = c.String(),
+                        OwnerName = c.String(),
+                        AssignedToUserName = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.TicketEditViewModels",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Title = c.String(nullable: false, maxLength: 100),
+                        Description = c.String(nullable: false),
+                        Created = c.DateTimeOffset(nullable: false, precision: 7),
+                        Updated = c.DateTimeOffset(precision: 7),
+                        AssignedToUserName = c.String(),
+                        Projects_DataGroupField = c.String(),
+                        Projects_DataTextField = c.String(),
+                        Projects_DataValueField = c.String(),
+                        TicketTypes_DataGroupField = c.String(),
+                        TicketTypes_DataTextField = c.String(),
+                        TicketTypes_DataValueField = c.String(),
+                        TicketPriorities_DataGroupField = c.String(),
+                        TicketPriorities_DataTextField = c.String(),
+                        TicketPriorities_DataValueField = c.String(),
+                        TicketStatuses_DataGroupField = c.String(),
+                        TicketStatuses_DataTextField = c.String(),
+                        TicketStatuses_DataValueField = c.String(),
+                        SelectedProject = c.Int(nullable: false),
+                        SelectedType = c.Int(nullable: false),
+                        SelectedPriority = c.Int(nullable: false),
+                        SelectedStatus = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.TicketPriorities",
                 c => new
                     {
@@ -279,6 +326,8 @@ namespace BugTracker.Migrations
             DropTable("dbo.TicketTypes");
             DropTable("dbo.TicketStatus");
             DropTable("dbo.TicketPriorities");
+            DropTable("dbo.TicketEditViewModels");
+            DropTable("dbo.TicketDetailsViewModels");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.TicketNotifications");
