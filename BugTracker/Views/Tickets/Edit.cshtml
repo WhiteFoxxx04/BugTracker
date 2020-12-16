@@ -77,7 +77,7 @@
                 @if (User.IsInRole("Project Manager") || User.IsInRole("Admin"))
                 {
                     @Html.Raw("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-                    @Html.ActionLink("Edit", "AssignUser", new { id = Model.Id }, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ActionLink("Assign Dev", "AssignUser", new { id = Model.Id }, new { htmlAttributes = new { @class = "form-control" } })
                 }
             </p>
         </div>

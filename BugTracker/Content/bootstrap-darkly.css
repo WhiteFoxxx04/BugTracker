@@ -20,6 +20,12 @@ html {
 body {
   margin: 0;
 }
+
+
+*::selection {
+    background-color: #FF3B77;
+}
+
 article,
 aside,
 details,

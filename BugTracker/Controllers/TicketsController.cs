@@ -28,6 +28,7 @@ namespace BugTracker.Controllers
             if (User.IsInRole("Admin"))
             {
                 ticketDetailsList = transformTickets(db.Tickets.ToList());
+                ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
                 return View(ticketDetailsList);
             }
             //Otherwise go through each role
@@ -59,6 +60,7 @@ namespace BugTracker.Controllers
                 var subDetailsList = transformTickets(tickets.ToList());
                 ticketDetailsList.AddRange(subDetailsList);
             }
+            ticketDetailsList = ticketDetailsList.OrderByDescending(x => x.Created).ToList();
             return View(ticketDetailsList);
         }
 
